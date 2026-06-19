@@ -1,135 +1,135 @@
-# Syngate — Hardware IoT (ESP32)
+# Syngate — IoT Hardware (ESP32)
 
-**Repositório do Firmware IoT da Aplicação Syngate**
-*Sistema de Controle de Acesso Físico com Validação em Nuvem*
+**Syngate Application IoT Firmware Repository**
+*Physical Access Control System with Cloud Validation*
 
 ---
 
-*Projeto Integrador da Turma 43 da Faculdade Senac Pernambuco.*
+*Capstone Project for Class 43 at Senac Pernambuco College.*
 
-### Plataforma e Linguagem
+### Platform & Language
 ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white) ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=Arduino&logoColor=white) ![ESP32](https://img.shields.io/badge/ESP32-000000?style=for-the-badge&logo=espressif&logoColor=white)
 
-### Comunicação e Bibliotecas
+### Communication & Libraries
 ![Wi-Fi](https://img.shields.io/badge/Wi--Fi-000000?style=for-the-badge&logo=wi-fi&logoColor=white) ![JSON](https://img.shields.io/badge/ArduinoJson-000000?style=for-the-badge&logo=json&logoColor=white) ![SPI](https://img.shields.io/badge/SPI-Bus-blue?style=for-the-badge)
 
 ---
 
-## Visão Geral
+## Overview
 
-Este repositório contém o firmware em C++ desenvolvido para a placa **ESP32 DevKit**, que atua como o terminal físico (Edge/IoT) do sistema **Syngate**.
+This repository contains the C++ firmware developed for the **ESP32 DevKit** board, which acts as the physical terminal (Edge/IoT) of the **Syngate** system.
 
-O dispositivo é responsável por detectar a presença de usuários, realizar a leitura segura de cartões RFID/NFC (MFRC522), determinar o sentido do fluxo (Entrada ou Saída) e validar o acesso em tempo real através de comunicação HTTP direta com a API RESTful do Syngate.
-
----
-
-## Ecossistema Syngate
-
-A aplicação está dividida em três componentes modulares e integrados. Navegue pelos repositórios para explorar cada camada do sistema:
-
-| Componente | Repositório | Escopo Técnico |
-|------------|-------------|----------------|
-| **API Backend** | [syngate-backend](https://github.com/Molimpion/syngate-backend) | API RESTful, regras de negócio (RBAC), WebSockets e persistência. |
-| **Frontend Web** | [syngate-frontend](https://github.com/Molimpion/syngate-frontend) | Interface administrativa, gráficos de consumo e monitoramento em tempo real. |
-| **Hardware IoT** | [syngate-iot](https://github.com/Molimpion/syngate-iot) | Firmware em C++ para ESP32, sensor ultrassônico e leitura segura de RFID. |
+The device is responsible for detecting user presence, securely reading RFID/NFC cards (MFRC522), determining the flow direction (Entry or Exit), and validating access in real-time through direct HTTP communication with the Syngate RESTful API.
 
 ---
 
-## Lógica de Funcionamento e Edge Computing
+## Syngate Ecosystem
 
-Para otimizar o consumo de energia e evitar leituras acidentais no módulo RFID, o firmware implementa uma **Máquina de Estados de Presença**:
+The application is divided into three modular and integrated components. Browse the repositories to explore each layer of the system:
 
-1. **Modo Ocioso:** Os LEDs permanecem apagados. O sensor ultrassônico varre o ambiente. O leitor RFID fica passivo.
-2. **Detecção (Raio de 30cm):** Quando um usuário entra no raio de ação do ultrassônico (`< 30cm`), o sistema desperta, acende o LED Vermelho (modo de espera) e ativa a antena do RFID.
-3. **Leitura e Direção:** O cartão é lido e seu UID é extraído. O dispositivo mantém um mapa em memória (`std::map`) para alternar logicamente a direção de cada usuário (a primeira leitura é registrada como `ENTRADA`, a subsequente como `SAIDA`, e assim sucessivamente).
-4. **Validação Cloud:** O ESP32 envia um payload JSON para a API via POST HTTP com os *headers* de segurança da máquina.
-5. **Feedback Visual:** - **Concedido:** LED Verde acende por 3 segundos. A direção lógica do usuário é alternada.
-* **Negado:** LED Vermelho pisca rapidamente 3 vezes. A direção lógica não é alterada.
+| Component | Repository | Technical Scope |
+| --- | --- | --- |
+| **Backend API** | [syngate-backend](https://github.com/Molimpion/syngate-backend) | RESTful API, business rules (RBAC), WebSockets, and persistence. |
+| **Web Frontend** | [syngate-frontend](https://github.com/Molimpion/syngate-frontend) | Administrative interface, consumption charts, and real-time monitoring. |
+| **IoT Hardware** | [syngate-iot](https://github.com/Molimpion/syngate-iot) | C++ firmware for ESP32, ultrasonic sensor, and secure RFID reading. |
+
+---
+
+## Operation Logic & Edge Computing
+
+To optimize power consumption and prevent accidental readings on the RFID module, the firmware implements a **Presence State Machine**:
+
+1. **Idle Mode:** LEDs remain off. The ultrasonic sensor sweeps the environment. The RFID reader is passive.
+2. **Detection (30cm Radius):** When a user enters the ultrasonic range (`< 30cm`), the system wakes up, turns on the Red LED (standby mode), and activates the RFID antenna.
+3. **Reading & Direction:** The card is read and its UID is extracted. The device maintains an in-memory map (`std::map`) to logically alternate the direction for each user (the first read is logged as `ENTRY`, the subsequent as `EXIT`, and so on).
+4. **Cloud Validation:** The ESP32 sends a JSON payload to the API via HTTP POST containing the machine's security headers.
+5. **Visual Feedback:** * **Granted:** Green LED turns on for 3 seconds. The user's logical direction is alternated.
+* **Denied:** Red LED blinks rapidly 3 times. The logical direction remains unchanged.
 
 
 
 ---
 
-## Hardware e Pinout (Diagrama de Ligação)
+## Hardware & Pinout (Wiring Diagram)
 
-O projeto foi construído para utilizar os seguintes pinos na ESP32:
+The project was built using the following ESP32 pins:
 
-| Componente | Pino ESP32 | Função |
+| Component | ESP32 Pin | Function |
 | --- | --- | --- |
 | **RFID MFRC522** | `GPIO 5` | SS / SDA (Slave Select) |
 | **RFID MFRC522** | `GPIO 4` | RST (Reset) |
-| **RFID MFRC522** | `GPIO 23` | MOSI (SPI padrão) |
-| **RFID MFRC522** | `GPIO 19` | MISO (SPI padrão) |
-| **RFID MFRC522** | `GPIO 18` | SCK (SPI padrão) |
-| **HC-SR04** | `GPIO 12` | TRIG (Emissor de pulso) |
-| **HC-SR04** | `GPIO 14` | ECHO (Receptor de retorno) |
-| **LED Indicador** | `GPIO 32` | LED Verde (Sucesso) |
-| **LED Indicador** | `GPIO 33` | LED Vermelho (Espera / Erro) |
+| **RFID MFRC522** | `GPIO 23` | MOSI (Standard SPI) |
+| **RFID MFRC522** | `GPIO 19` | MISO (Standard SPI) |
+| **RFID MFRC522** | `GPIO 18` | SCK (Standard SPI) |
+| **HC-SR04** | `GPIO 12` | TRIG (Pulse emitter) |
+| **HC-SR04** | `GPIO 14` | ECHO (Echo receiver) |
+| **Indicator LED** | `GPIO 32` | Green LED (Success) |
+| **Indicator LED** | `GPIO 33` | Red LED (Standby / Error) |
 
 ---
 
-## Segurança e Autenticação (Zero Trust)
+## Security & Authentication (Zero Trust)
 
-O dispositivo **não** utiliza tokens JWT convencionais, pois são vulneráveis caso extraídos do firmware. A autenticação é baseada em credenciais imutáveis geradas no provisionamento pelo Painel Web:
+The device does **not** use conventional JWT tokens, as they are vulnerable if extracted from the firmware. Authentication is based on immutable credentials generated during provisioning on the Web Dashboard.
 
-Nas requisições HTTP para a API, os seguintes *headers* são obrigatórios:
+In HTTP requests to the API, the following headers are mandatory:
 
 ```http
 x-device-mac: 80:F3:DA:A9:A3:6C
-x-device-key: <chave_sha256_gerada_no_painel>
+x-device-key: <sha256_key_generated_on_dashboard>
 
 ```
 
-*Qualquer requisição com MAC incompatível com a chave, ou vinda de um dispositivo com status `INATIVO` no banco de dados, será negada pela API na camada de middleware (antes mesmo de avaliar o cartão).*
+*Any request with a MAC that does not match the key, or coming from a device with an `INACTIVE` status in the database, will be denied by the API at the middleware layer (even before evaluating the card).*
 
 ---
 
-## Como Executar e Gravar o Firmware
+## Getting Started & Flashing the Firmware
 
-### Pré-requisitos
+### Prerequisites
 
-* Arduino IDE (v2.x recomendada) ou VS Code com PlatformIO.
-* Suporte a placas ESP32 instalado no Gerenciador de Placas.
+* Arduino IDE (v2.x recommended) or VS Code with PlatformIO.
+* ESP32 board support installed in the Boards Manager.
 
-### Bibliotecas Necessárias
+### Required Libraries
 
-Instale as seguintes bibliotecas através do Gerenciador de Bibliotecas da IDE:
+Install the following libraries through the IDE Library Manager:
 
 1. `MFRC522` by GithubCommunity
 2. `ArduinoJson` by Benoit Blanchon (v6.x)
 
-### Configuração Inicial
+### Initial Configuration
 
-Antes de compilar e fazer o *upload* (`ESP32D_devkit_Syngate.cpp`), ajuste as constantes de ambiente no topo do código:
+Before compiling and uploading (`ESP32D_devkit_Syngate.cpp`), adjust the environment constants at the top of the code:
 
 ```cpp
-// ===== Credenciais WiFi =====
-const char* WIFI_SSID     = "SUA_REDE_WIFI";
-const char* WIFI_PASSWORD = "SUA_SENHA_WIFI";
+// ===== WiFi Credentials =====
+const char* WIFI_SSID     = "YOUR_WIFI_SSID";
+const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
 
-// ===== Configuração da API Syngate =====
+// ===== Syngate API Configuration =====
 const char* API_URL    = "https://syngate-api.onrender.com/api/v1/access";
-const char* DEVICE_MAC = "MAC_ADDRESS_DA_SUA_ESP32";
-const char* DEVICE_KEY = "CHAVE_GERADA_NO_PAINEL_WEB";
+const char* DEVICE_MAC = "YOUR_ESP32_MAC_ADDRESS";
+const char* DEVICE_KEY = "KEY_GENERATED_ON_WEB_DASHBOARD";
 
 ```
 
-### Modos de Teste (Offline)
+### Offline Test Modes
 
-A pasta do projeto inclui versões de debug que não dependem da nuvem para funcionar. Ideais para testar as soldas e jumpers:
+The project folder includes debug versions that do not rely on the cloud to function. These are ideal for testing solders and jumpers:
 
-* `ESP32D.cpp`: Teste base do RFID com hardcode de um UID autorizado e controle de LEDs.
-* `ESP32D-cor.cpp`: Integração do RFID com o HC-SR04, poupando energia, mas ainda com validação local.
-
----
-
-## Tratamento de Falhas (Resiliência)
-
-* **Auto-Reconnect Wi-Fi:** Se a conexão cair, a *main loop* bloqueia a operação, acende o LED vermelho para evitar falso controle de fluxo, e tenta reconectar em intervalos de 5 segundos (`WIFI_TIMEOUT_MS`).
-* **Timeouts HTTP:** Para evitar que o dispositivo "congele" aguardando resposta caso a API demore, um limite de resposta rígido de 8 segundos (`HTTP_TIMEOUT_MS`) foi estabelecido. Falhas resultam em negação de acesso imediata.
+* `ESP32D.cpp`: Basic RFID test with a hardcoded authorized UID and LED control.
+* `ESP32D-cor.cpp`: Integrates the RFID with the HC-SR04, saving energy, but still relying on local validation.
 
 ---
 
-## 7. Licença
+## Failure Handling (Resilience)
 
-Este projeto está sob a Licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+* **Auto-Reconnect Wi-Fi:** If the connection drops, the main loop blocks operation, turns on the red LED to prevent false flow control, and attempts to reconnect at 5-second intervals (`WIFI_TIMEOUT_MS`).
+* **HTTP Timeouts:** To prevent the device from "freezing" while waiting for a delayed API response, a strict 8-second response limit (`HTTP_TIMEOUT_MS`) has been established. Failures result in immediate access denial.
+
+---
+
+## 7. License
+
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
