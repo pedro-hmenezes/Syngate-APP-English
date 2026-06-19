@@ -2,246 +2,253 @@
 
 > **Abstract:** Syngate is an intelligent access control system leveraging IoT, Cloud Computing, and Edge processing. Designed to solve physical access limitations in academic environments, the MVP utilizes an ESP32 microcontroller, RFID authentication, and ultrasonic sensors to validate user entry. Connected to a RESTful Node.js API and a PostgreSQL database, the system ensures secure, automated, and fail-safe access management while adhering to data privacy principles.
 
-## Links de Acesso
+## Repository & Live Links
 
-* **Repositório Back-End:** [Syngate-BackEnd](https://github.com/Molimpion/Syngate-BackEnd)
-* **Repositório Front-End:** [syngate-frontend](https://github.com/Molimpion/syngate-frontend)
-* **Repositório IoT:** [Syngate-IOT](https://github.com/Molimpion/Syngate-IOT)
-* **Apresentação (Slides):** [Acessar Apresentação](https://github.com/Molimpion/Syngate-IOT/blob/main/docs/presentation/slide.pdf)
-* **Solução em Execução:** [Acessar Plataforma Web](https://syngate-frontend.vercel.app/login)
-* **Documentação e Gestão:** [Quadro Kanban (GitHub Projects)](https://github.com/users/Molimpion/projects/1)
-
----
-
-## 1. Identificação
-
-* **Nome do Projeto:** Syngate
-* **Equipe:**
-  * Pedro Menezes
-  * Camilla Vieira
-  * Manoel Olimpio
-  * José Fernando
-  * Maria Augusta
-  * Dayanni Rodrigues
-  * Muriel Bezerra
-* **Turma / Período:** Turma 43 ADS
-* **Unidades Curriculares (UCs) Integradas:**
-  * IoT & Artefato — Arnott Caiado
-  * Comportamento do Consumidor — Paulo Guimarães
-  * Cloud Computing — Alisson Vinicius
-  * Segurança da Informação & LGPD — Paulo Pimentel
-  * Qualidade de Software — Paulo Pimentel
-  * Análise e Projetos de Sistemas — Marcus Vinicius
-  * Tech English — Leonardo Trevas
+* **Back-End Repository:** [Syngate-BackEnd](https://github.com/Molimpion/Syngate-BackEnd)
+* **Front-End Repository:** [syngate-frontend](https://github.com/Molimpion/syngate-frontend)
+* **IoT Repository:** [Syngate-IOT](https://github.com/Molimpion/Syngate-IOT)
+* **Presentation (Slides):** [Access Presentation](https://github.com/Molimpion/Syngate-IOT/blob/main/docs/presentation/slide.pdf)
+* **Live Solution:** [Access Web Platform](https://syngate-frontend.vercel.app/login)
+* **Documentation & Management:** [Kanban Board (GitHub Projects)](https://github.com/users/Molimpion/projects/1)
 
 ---
 
-## 1.1 Marcas Formativas em Evidência
+## 1. Project & Team Identification
 
-O desenvolvimento do Syngate mobilizou as seguintes marcas formativas:
+* **Project Name:** Syngate
 
-* **Domínio técnico-científico:** Evidenciado na estruturação do firmware do ESP32, na integração entre sensores RFID e ultrassônico, na comunicação HTTP com a API e na modelagem relacional do banco de dados PostgreSQL utilizando Prisma ORM.
-* **Resolução de problemas com autonomia digital:** Demonstrado na integração entre hardware e software, implementação de rotinas de reconexão automática ao Wi-Fi, tratamento de falhas de comunicação com a API e depuração dos payloads JSON trafegados entre os dispositivos e o backend.
-* **Visão crítica, ética e segurança:** Aplicada na proteção de credenciais através de arquivos `.env`, autenticação dos dispositivos por meio de chaves exclusivas (`Device Key`) e adoção dos princípios de minimização de dados previstos pela LGPD.
-* **Comunicação e colaboração:** Refletida na documentação técnica do projeto, na organização do repositório GitHub, na divisão de responsabilidades da equipe e na apresentação estruturada da solução.
-* **Atitude empreendedora e inovadora:** Materializada na identificação de uma dor real relacionada ao controle de acesso acadêmico e na proposição de um MVP de baixo custo, escalável e baseado em tecnologias amplamente utilizadas pelo mercado.
+**Team:**
+* Pedro Menezes
+* Camilla Vieira
+* Manoel Olimpio
+* José Fernando
+* Maria Augusta
+* Dayanni Rodrigues
+* Muriel Bezerra
 
----
 
-## 2. Documento de Requisitos Simplificado
+**Class / Term:** Class 43 ADS
 
-### 2.1 Descrição do Problema
+**Integrated Courses:**
+* IoT & Artifacts — Prof. Arnott Caiado
+* Consumer Behavior — Prof. Paulo Guimarães
+* Cloud Computing — Prof. Alisson Vinicius
+* Information Security & LGPD — Prof. Paulo Pimentel
+* Software Quality — Prof. Paulo Pimentel
+* Systems Analysis and Design — Prof. Marcus Vinicius
+* Tech English — Prof. Leonardo Trevas
 
-Atualmente, o ambiente acadêmico apresenta limitações relacionadas ao controle e gerenciamento de acessos. A entrada principal não possui um mecanismo automatizado de identificação de alunos, professores ou visitantes, dificultando o controle de circulação de pessoas dentro da instituição.
 
-Além disso, o acesso às salas de aula depende, em muitos casos, da presença de professores ou coordenadores para abertura dos ambientes, gerando atrasos, dependência operacional e impactos na experiência dos usuários.
-
-Diante desse cenário, surge a necessidade de uma solução inteligente capaz de controlar acessos de forma segura, automatizada e contextual, considerando não apenas a identidade do usuário, mas também informações como local, horário e permissões associadas.
-
-O projeto Syngate foi concebido para atender essa necessidade por meio da integração entre dispositivos IoT, computação em nuvem e aplicações web, proporcionando uma experiência de acesso mais segura, eficiente e moderna.
-
-### 2.2 Escopo do MVP (Minimum Viable Product)
-
-O MVP do Syngate tem como objetivo validar a viabilidade técnica e funcional de um sistema de controle de acesso inteligente utilizando IoT, Desenvolvimento Web e Cloud Computing. A versão inicial contempla:
-
-* Leitura da identificação do usuário por meio de cartões RFID.
-* Detecção de aproximação utilizando sensor ultrassônico HC-SR04.
-* Processamento local embarcado utilizando ESP32.
-* Comunicação via Wi-Fi com uma API desenvolvida em Node.js/TypeScript.
-* Validação de acesso baseada em regras de autorização definidas no backend.
-* Registro dos eventos de acesso em banco de dados PostgreSQL.
-* Gerenciamento de dados através do Prisma ORM.
-* Feedback visual local utilizando LEDs de status.
-* Operação resiliente com mecanismos de reconexão automática e tratamento de falhas.
-
-> **Fora do escopo do MVP:** reconhecimento facial, integração com sistemas acadêmicos oficiais, biometria e abertura física automatizada de portas (tranca eletrônica).
-
-### 2.3 Requisitos Funcionais (RF)
-
-| ID | Descrição |
-| :--- | :--- |
-| RF-001 | O sistema deve identificar usuários por meio de cartões RFID utilizando o módulo MFRC522. |
-| RF-002 | O ESP32 deve realizar a leitura periódica dos dispositivos de identificação conectados ao sistema. |
-| RF-003 | O firmware deve encapsular os dados coletados em formato JSON. |
-| RF-004 | O ESP32 deve enviar os dados de acesso para a API através de requisições HTTP. |
-| RF-005 | A API deve validar as permissões de acesso do usuário. |
-| RF-006 | O sistema deve registrar os eventos de acesso no banco de dados PostgreSQL, incluindo data, horário e local. |
-| RF-007 | O sistema deve indicar localmente o resultado da validação através de LEDs de status. |
-| RF-008 | O dashboard em nuvem deve exibir os registros recebidos em tempo real. |
-| RF-009 | O sistema deve permitir operação em modo degradado (Edge Computing) em caso de indisponibilidade temporária da internet. |
-
-### 2.4 Requisitos Não Funcionais (RNF) Mensuráveis
-
-| ID | Categoria | Descrição |
-| :--- | :--- | :--- |
-| RNF-001 | Tempo de Resposta | O tempo total entre a leitura da identificação e o retorno da validação não deve ultrapassar 2 segundos em condições normais de rede. |
-| RNF-002 | Intervalo de Amostragem | O firmware deve verificar novas tentativas de acesso em intervalos máximos de 500 milissegundos. |
-| RNF-003 | Confiabilidade de Rede | O ESP32 deve executar tentativas automáticas de reconexão ao Wi-Fi a cada 10 segundos em caso de perda de conectividade. |
-| RNF-004 | Disponibilidade | O sistema deve permanecer operacional por pelo menos 95% do tempo durante os testes do MVP. |
-| RNF-005 | Segurança | Credenciais de acesso, chaves de API e informações sensíveis não devem estar expostas diretamente no código-fonte versionado. |
-| RNF-006 | Escalabilidade | A arquitetura deve permitir a adição de novos dispositivos ESP32 sem necessidade de alterações significativas na API. |
 
 ---
 
-## 3. Mapeamento de Unidades Curriculares (UCs)
+## 1.1 Core Competencies Evidenced
 
-| Conceito / Competência | Unidade Curricular (UC) | Onde está evidenciado no projeto |
-| :--- | :--- | :--- |
-| Programação de Firmware para embarcados | IoT & Artefato | Firmware desenvolvido para ESP32, leitura dos dispositivos, processamento local e comunicação. |
-| Edge Computing e sistemas resilientes | IoT & Artefato | Regras de operação local (fail-safe) e funcionamento degradado sem conexão. |
-| Identificação da dor e Jornada do Usuário | Comportamento do Consumidor | Mapeamento do problema de acesso, definição da persona e fluxo de utilização do Syngate. |
-| Integração Nuvem e Persistência | Cloud Computing | Comunicação ESP32 > API e utilização do PostgreSQL com Prisma ORM para histórico. |
-| Proteção de credenciais e LGPD | Segurança da Info. & LGPD | Uso de `.env`, minimização de dados coletados para auditoria. |
-| Confiabilidade e Requisitos | Qualidade de Software | Tratamento de erros, reconexão automática, documento de RFs e RNFs mensuráveis. |
-| Arquitetura e Integração REST | Análise e Projetos de Sistemas | Modelagem lógica (IoT > API > DB > Dashboard) e requisições HTTP/JSON. |
-| Documentação e Vocabulário Técnico | Tech English | Uso de nomenclaturas em inglês (API, Edge Computing, Payload, Endpoint) e estruturação do README. |
+The development of Syngate mobilized the following core competencies:
+
+* **Technical-Scientific Mastery:** Evidenced in the ESP32 firmware structuring, the integration between RFID and ultrasonic sensors, HTTP communication with the API, and the relational database modeling in PostgreSQL using Prisma ORM.
+* **Digital Autonomy in Problem Solving:** Demonstrated in the hardware-software integration, implementation of automatic Wi-Fi reconnection routines, API communication failure handling, and debugging of JSON payloads transmitted between devices and the backend.
+* **Critical, Ethical, and Security Vision:** Applied in the protection of credentials through `.env` files, device authentication via exclusive keys (`Device Key`), and the adoption of data minimization principles mandated by the LGPD.
+* **Communication and Collaboration:** Reflected in the project's technical documentation, GitHub repository organization, division of team responsibilities, and the structured presentation of the solution.
+* **Entrepreneurial and Innovative Attitude:** Materialized in identifying a real pain point regarding academic access control and proposing a low-cost, scalable MVP based on widely used market technologies.
 
 ---
 
-## 4. Esboços e Diagramas Técnicos
+## 2. Simplified Requirements Document
 
-### 4.1 Diagrama de Arquitetura Lógica
+### 2.1 Problem Description
 
-| Camada | Componentes |
-| :--- | :--- |
-| **Percepção (Hardware)** | ESP32 DevKit V1, Leitor RFID MFRC522, Sensor Ultrassônico HC-SR04, LEDs de status |
-| **Rede (Comunicação)** | Wi-Fi IEEE 802.11, HTTP/HTTPS, Payloads JSON, Autenticação por Device MAC/Key |
-| **Nuvem (Aplicação)** | Backend Node.js/TypeScript, API REST, PostgreSQL, Prisma ORM, Hospedagem (Render) |
+Currently, the academic environment presents limitations related to access control and management. The main entrance lacks an automated mechanism to identify students, professors, or visitors, hindering the control of people's circulation within the institution.
 
-### 4.2 Fluxograma de Decisão do Firmware
+Furthermore, access to classrooms often relies on the presence of professors or coordinators to unlock the rooms, causing delays, operational dependence, and negatively impacting the user experience.
+
+Given this scenario, there is a need for an intelligent solution capable of securely, automatically, and contextually controlling access, considering not only user identity but also information such as location, time, and associated permissions.
+
+The Syngate project was designed to meet this need by integrating IoT devices, cloud computing, and web applications, providing a safer, more efficient, and modern access experience.
+
+### 2.2 MVP Scope (Minimum Viable Product)
+
+The Syngate MVP aims to validate the technical and functional viability of a smart access control system using IoT, Web Development, and Cloud Computing. The initial version includes:
+
+* User identification reading via RFID cards/tags.
+* Proximity detection using the HC-SR04 ultrasonic sensor.
+* Embedded local processing using the ESP32.
+* Wi-Fi communication with a Node.js/TypeScript API.
+* Access validation based on authorization rules defined in the backend.
+* Logging access events in a PostgreSQL database.
+* Data management through Prisma ORM.
+* Local visual feedback using status LEDs.
+* Resilient operation with automatic reconnection mechanisms and failure handling.
+
+> **Out of MVP scope:** facial recognition, integration with official academic systems, biometrics, and automated physical door opening (electronic locks).
+
+### 2.3 Functional Requirements (FR)
+
+| ID | Description |
+| --- | --- |
+| FR-001 | The system must identify users via RFID cards using the MFRC522 module. |
+| FR-002 | The ESP32 must periodically read the identification devices connected to the system. |
+| FR-003 | The firmware must encapsulate the collected data in JSON format. |
+| FR-004 | The ESP32 must send the access data to the API via HTTP requests. |
+| FR-005 | The API must validate the user's access permissions. |
+| FR-006 | The system must log access events in the PostgreSQL database, including date, time, and location. |
+| FR-007 | The system must locally indicate the validation result via status LEDs. |
+| FR-008 | The cloud dashboard must display received logs in real-time. |
+| FR-009 | The system must allow degraded mode operation (Edge Computing) in case of temporary internet unavailability. |
+
+### 2.4 Measurable Non-Functional Requirements (NFR)
+
+| ID | Category | Description |
+| --- | --- | --- |
+| NFR-001 | Response Time | The total time between ID reading and validation return must not exceed 2 seconds under normal network conditions. |
+| NFR-002 | Sampling Interval | The firmware must check for new access attempts at maximum intervals of 500 milliseconds. |
+| NFR-003 | Network Reliability | The ESP32 must perform automatic Wi-Fi reconnection attempts every 10 seconds in case of connectivity loss. |
+| NFR-004 | Availability | The system must remain operational for at least 95% of the time during MVP testing. |
+| NFR-005 | Security | Access credentials, API keys, and sensitive information must not be directly exposed in the versioned source code. |
+| NFR-006 | Scalability | The architecture must allow the addition of new ESP32 devices without requiring significant changes to the API. |
+
+---
+
+## 3. Course Integration Mapping
+
+| Concept / Competency | Integrated Course | Where it is evidenced in the project |
+| --- | --- | --- |
+| Embedded firmware programming | IoT & Artifacts | Firmware developed for ESP32, device reading, local processing, and communication. |
+| Edge Computing and resilient systems | IoT & Artifacts | Local operation rules (fail-safe) and degraded offline functioning. |
+| Pain point identification and User Journey | Consumer Behavior | Mapping the access problem, defining the persona, and Syngate usage flow. |
+| Cloud Integration and Persistence | Cloud Computing | ESP32 > API communication and PostgreSQL usage with Prisma ORM for history logs. |
+| Credential protection and LGPD | Information Security & LGPD | Use of `.env`, data minimization collected for auditing. |
+| Reliability and Requirements | Software Quality | Error handling, auto-reconnection, FR and NFR document. |
+| Architecture and REST Integration | Systems Analysis and Design | Logical modeling (IoT > API > DB > Dashboard) and HTTP/JSON requests. |
+| Documentation and Technical Vocabulary | Tech English | Use of English nomenclatures (API, Edge Computing, Payload, Endpoint) and README structuring. |
+
+---
+
+## 4. Technical Diagrams & Schematics
+
+### 4.1 Logical Architecture Diagram
+
+| Layer | Components |
+| --- | --- |
+| **Perception (Hardware)** | ESP32 DevKit V1, MFRC522 RFID Reader, HC-SR04 Ultrasonic Sensor, Status LEDs |
+| **Network (Communication)** | Wi-Fi IEEE 802.11, HTTP/HTTPS, JSON Payloads, Device MAC/Key Authentication |
+| **Cloud (Application)** | Node.js/TypeScript Backend, REST API, PostgreSQL, Prisma ORM, Hosting (Render) |
+
+### 4.2 Firmware Decision Flowchart
+
+```text
+Initialization
+     │
+     ▼
+Read ultrasonic sensor
+     │
+     ▼
+Proximity detected? ──NO──► Wait
+     │ YES
+     ▼
+Read RFID card (UID)
+     │
+     ▼
+Determine direction (Entry / Exit)
+     │
+     ▼
+Build JSON payload and send HTTP to API
+     │
+     ▼
+Receive backend response
+     │
+     ▼
+Authorized? ──YES──► Green LED
+     │ NO
+     ▼
+Red LED
+     │
+     ▼
+Return to main loop
 
 ```
-Inicialização
-     │
-     ▼
-Leitura do sensor ultrassônico
-     │
-     ▼
-Aproximação detectada? ──NÃO──► Aguarda
-     │ SIM
-     ▼
-Leitura do cartão RFID (UID)
-     │
-     ▼
-Determina direção (Entrada / Saída)
-     │
-     ▼
-Monta payload JSON e envia HTTP para API
-     │
-     ▼
-Recebe resposta do backend
-     │
-     ▼
-Autorizado? ──SIM──► LED Verde
-     │ NÃO
-     ▼
-LED Vermelho
-     │
-     ▼
-Retorna ao loop principal
-```
 
-### 4.3 Esquema Elétrico de Ligação
+### 4.3 Wiring Schematic
 
-| Componente | Pino | ESP32 |
-| :--- | :--- | :--- |
+| Component | Pin | ESP32 |
+| --- | --- | --- |
 | **RFID MFRC522** | SDA | GPIO 5 |
-| | RST | GPIO 4 |
-| | MOSI | GPIO 23 |
-| | MISO | GPIO 19 |
-| | SCK | GPIO 18 |
+|  | RST | GPIO 4 |
+|  | MOSI | GPIO 23 |
+|  | MISO | GPIO 19 |
+|  | SCK | GPIO 18 |
 | **HC-SR04** | TRIG | GPIO 12 |
-| | ECHO | GPIO 14 |
-| **LED Verde** | — | GPIO 32 |
-| **LED Vermelho** | — | GPIO 33 |
+|  | ECHO | GPIO 14 |
+| **Green LED** | — | GPIO 32 |
+| **Red LED** | — | GPIO 33 |
 
-> VCC/3.3V e GND conectados aos pinos de alimentação e terra correspondentes.
+> VCC/3.3V and GND connected to the corresponding power and ground pins.
 
 ---
 
-## 5. Dossiê de Evidências
+## 5. Evidence Dossier
 
-### 5.1 Circuito Físico ou Ambiente Simulado
+### 5.1 Physical Circuit or Simulated Environment
 
-![Evidência do Circuito](Docs/Images/Circuito2.jpeg)
+![Evidência do Circuito](Docs/Images/Circuit2.jpeg)
 
-### 5.2 Serial Monitor e Payload JSON
+### 5.2 Serial Monitor and JSON Payload
 
-![Evidência do Serial Monitor](Docs/Images/AmbienteSimulado2.jpeg)
+![Evidência do Serial Monitor](Docs/Images/SimulatedEnvironment.jpeg)
 
-### 5.3 Dashboards em Nuvem
+### 5.3 Cloud Dashboards
 
 ![Evidência do Dashboard](Docs/Images/Dashboard.jpeg)
 
 ---
 
-## 6. Instruções de Execução
+## 6. Getting Started / Execution Instructions
 
-### 6.1 Pré-requisitos
+### 6.1 Prerequisites
 
-* ESP32 DevKit V1 + sensores (RFID MFRC522 e HC-SR04) + Arduino IDE 2.x
+* ESP32 DevKit V1 + sensors (RFID MFRC522 and HC-SR04) + Arduino IDE 2.x
 * Node.js 20+
 * PostgreSQL + Prisma ORM
 * Git
 
-### 6.2 Executando o Backend
+### 6.2 Running the Backend
 
 ```bash
-# Clone o repositório
-git clone <repositorio>
+# Clone the repository
+git clone <repository>
 cd backend
 
-# Instale as dependências
+# Install dependencies
 npm install
 
-# Configure as variáveis de ambiente
+# Configure environment variables
 cp .env.example .env
-# Edite o arquivo .env com suas credenciais do banco e JWT
+# Edit the .env file with your database and JWT credentials
 
-# Gere o client do Prisma e execute as migrations
+# Generate the Prisma client and run migrations
 npx prisma generate
 npx prisma migrate deploy
 
-# Inicie o servidor
+# Start the server
 npm run dev
+
 ```
 
-### 6.3 Executando o Firmware (ESP32)
+### 6.3 Running the Firmware (ESP32)
 
-1. Abra o projeto na Arduino IDE.
-2. Instale as bibliotecas necessárias: `MFRC522` e `ArduinoJson`.
-3. Configure as credenciais de Wi-Fi (SSID e Senha) e a URL da API no código.
-4. Compile e faça o upload para o ESP32.
+1. Open the project in the Arduino IDE.
+2. Install the required libraries: `MFRC522` and `ArduinoJson`.
+3. Configure Wi-Fi credentials (SSID and Password) and the API URL in the code.
+4. Compile and upload to the ESP32.
 
 ---
 
-## 7. Segurança e Integridade Acadêmica
+## 7. Security & Academic Integrity
 
-### Gerenciamento de Credenciais e LGPD
+### Credential Management & LGPD
 
-As credenciais utilizadas não são armazenadas no código-fonte versionado (isoladas via `.gitignore`). O ambiente é configurado via `.env.example`. O projeto adota o princípio da minimização de dados da LGPD, armazenando apenas o estritamente necessário para auditoria de acessos.
+The credentials used are not stored in the versioned source code (isolated via `.gitignore`). The environment is configured via `.env.example`. The project adopts the LGPD's data minimization principle, storing only what is strictly necessary for access auditing.
 
-### Uso de Inteligência Artificial
+### Artificial Intelligence Usage
 
-Ferramentas de IA Generativa foram utilizadas como apoio para pesquisa, formatação de documentação, brainstorming e revisão. Todo o código implementado foi analisado, compreendido e validado arquiteturalmente pela equipe.
-```
+Generative AI tools were used as support for research, documentation formatting, brainstorming, and review. All implemented code was analyzed, understood, and architecturally validated by the team.
