@@ -190,15 +190,15 @@ Return to main loop
 
 ### 5.1 Physical Circuit or Simulated Environment
 
-![Evidência do Circuito](Docs/Images/Circuit2.jpeg)
+![Evidência do Circuito](Documents/Images/Circuit2.jpeg)
 
 ### 5.2 Serial Monitor and JSON Payload
 
-![Evidência do Serial Monitor](Docs/Images/SimulatedEnvironment.jpeg)
+![Evidência do Serial Monitor](Documents/Images/SimulatedEnvironment.jpeg)
 
 ### 5.3 Cloud Dashboards
 
-![Evidência do Dashboard](Docs/Images/Dashboard.jpeg)
+![Evidência do Dashboard](Documents/Images/Dashboard.jpeg)
 
 ---
 
