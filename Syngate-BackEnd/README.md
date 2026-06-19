@@ -1,132 +1,119 @@
 # Syngate — Backend
 
-**Repositório do Backend da Aplicação Syngate:**
-*Sistema de Controle de Acesso Físico com Integração IoT*
+**Syngate Application Backend Repository:**
+*Physical Access Control System with IoT Integration*
 
 ---
 
-*Projeto Integrador da Turma 43 da Faculdade Senac Pernambuco.*
+*Capstone Project for Class 43 at Senac Pernambuco College.*
 
-### Framework e Ambiente Principal
+### Main Framework & Environment
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
 
-### Banco de Dados e Cache
+### Database & Cache
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white) ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white) ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
 
-### Infraestrutura e Observabilidade
+### Infrastructure & Observability
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![Jest](https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white)
 
-### Validação, Ferramentas e Documentação
+### Validation, Tools & Documentation
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black) ![Scalar](https://img.shields.io/badge/Scalar-101827?style=for-the-badge&logo=openapiinitiative&logoColor=white) ![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)
 
 ---
 
-## Visão Geral
+## Overview
 
-Este repositório contém o código-fonte do backend da aplicação **Syngate**, uma **API RESTful** modular projetada para gerenciar controle de acesso físico em ambientes institucionais com integração a hardware IoT (ESP32 + RFID/NFC).
+This repository contains the source code for the backend of the **Syngate** application, a modular **RESTful API** designed to manage physical access control in institutional environments with IoT hardware integration (ESP32 + RFID/NFC).
 
-O sistema autentica usuários via cartão RFID, valida turno horário e perfil de acesso em tempo real, registra logs de auditoria e emite eventos via Socket.IO para o painel web.
+The system authenticates users via RFID cards, validates time shifts and access profiles in real-time, records audit logs, and emits events via Socket.IO to the web dashboard.
 
-**API ao vivo:** [https://syngate-api.onrender.com](https://syngate-api.onrender.com)
+**Live API:** [https://syngate-api.onrender.com](https://syngate-api.onrender.com)
 
-**Documentação interativa:** disponível apenas em ambiente local em `http://localhost:3333/docs` (Scalar) e `http://localhost:3333/swagger` (Swagger UI). Desabilitada em produção por segurança.
-
----
-
-## Ecossistema Syngate
-
-A aplicação está dividida em três componentes modulares e integrados. Navegue pelos repositórios para explorar cada camada do sistema:
-
-| Componente | Repositório | Escopo Técnico |
-|------------|-------------|----------------|
-| **API Backend** | [syngate-backend](https://github.com/Molimpion/syngate-backend) | API RESTful, regras de negócio (RBAC), WebSockets e persistência. |
-| **Frontend Web** | [syngate-frontend](https://github.com/Molimpion/syngate-frontend) | Interface administrativa, gráficos de consumo e monitoramento em tempo real. |
-| **Hardware IoT** | [syngate-iot](https://github.com/Molimpion/syngate-iot) | Firmware em C++ para ESP32, sensor ultrassônico e leitura segura de RFID. |
+**Interactive Documentation:** available only in the local environment at `http://localhost:3333/docs` (Scalar) and `http://localhost:3333/swagger` (Swagger UI). Disabled in production for security reasons.
 
 ---
 
-## Arquitetura e Decisões de Design
+## Syngate Ecosystem
 
-A aplicação segue uma arquitetura baseada em **Módulos**, separando domínios lógicos para maximizar a manutenibilidade, com separação clara entre `schemas`, `middlewares`, `services` e `controllers`.
+The application is divided into three modular and integrated components. Browse the repositories to explore each layer of the system:
 
-```
+| Component | Repository | Technical Scope |
+| --- | --- | --- |
+| **Backend API** | [syngate-backend](https://github.com/Molimpion/syngate-backend) | RESTful API, business rules (RBAC), WebSockets, and persistence. |
+| **Web Frontend** | [syngate-frontend](https://github.com/Molimpion/syngate-frontend) | Administrative interface, consumption charts, and real-time monitoring. |
+| **IoT Hardware** | [syngate-iot](https://github.com/Molimpion/syngate-iot) | C++ firmware for ESP32, ultrasonic sensor, and secure RFID reading. |
+
+---
+
+## Architecture & Design Decisions
+
+The application follows a **Module**-based architecture, separating logical domains to maximize maintainability, with a clear separation between `schemas`, `middlewares`, `services`, and `controllers`.
+
+```text
 src/
-├── config/          # Swagger e Scalar
-├── lib/             # Clientes Prisma, Redis e Socket.IO
-├── modules/         # Domínios: access, auth, devices, reports, rooms, shifts, users
-├── schemas/         # Validação Zod por domínio
+├── config/          # Swagger and Scalar
+├── lib/             # Prisma, Redis, and Socket.IO Clients
+├── modules/         # Domains: access, auth, devices, reports, rooms, shifts, users
+├── schemas/         # Zod validation per domain
 └── shared/
     ├── middlewares/ # Auth JWT, Device, Rate Limit, Role, Validate, Error
-    ├── types/       # Tipos globais e augmentations Express
-    └── utils/       # Utilitários: device-key, events, hash, shift-validator
+    ├── types/       # Global types and Express augmentations
+    └── utils/       # Utilities: device-key, events, hash, shift-validator
 
 ```
 
-**Decisões técnicas relevantes:**
+**Relevant technical decisions:**
 
-* **Autenticação dupla:** usuários via JWT (Bearer token, 15min) + refresh token rotativo (7 dias, hash SHA-256 no banco); dispositivos IoT via headers `x-device-mac` + `x-device-key` (SHA-256), sem JWT
-
-
-* **Rate limiting:** global via Redis (100 req/15min); endpoints de auth com limite próprio (10 req/15min)
-
-
-* **Blacklist de tokens:** logout invalida o access token imediatamente via Redis com TTL igual ao tempo restante
-
-
-* **Validação de turnos:** suporte a turnos noturnos que cruzam meia-noite; horários em minutos desde meia-noite
-
-
-* **Cache de relatórios:** dashboard cacheado no Redis por 5 minutos
-
-
-* **Soft delete:** usuários desativados têm `ativo = false`, dados e logs preservados
-
-
-* **Documentação protegida:** Swagger/Scalar desabilitados em `NODE_ENV=production`
-
+* **Dual authentication:** users via JWT (Bearer token, 15min) + rotating refresh token (7 days, SHA-256 hash in DB); IoT devices via headers `x-device-mac` + `x-device-key` (SHA-256), no JWT.
+* **Rate limiting:** global via Redis (100 req/15min); auth endpoints have their own limit (10 req/15min).
+* **Token blacklist:** logout invalidates the access token immediately via Redis with a TTL equal to the remaining time.
+* **Shift validation:** supports night shifts crossing midnight; times stored in minutes since midnight.
+* **Report caching:** dashboard cached in Redis for 5 minutes.
+* **Soft delete:** deactivated users have `ativo = false`, preserving data and logs.
+* **Protected documentation:** Swagger/Scalar disabled when `NODE_ENV=production`.
 
 ---
 
-## Infraestrutura de Produção
+## Production Infrastructure
 
-| Serviço | Provedor | Observação |
+| Service | Provider | Note |
 | --- | --- | --- |
-| API (Node.js) | Render (Web Service) | Free tier — hiberna após 15min sem uso |
-| Banco de Dados | Neon (PostgreSQL 18) | Região: São Paulo |
-| Cache | Upstash (Redis) | Região: São Paulo — 500k comandos/mês |
+| API (Node.js) | Render (Web Service) | Free tier — hibernates after 15min of inactivity |
+| Database | Neon (PostgreSQL 18) | Region: São Paulo |
+| Cache | Upstash (Redis) | Region: São Paulo — 500k commands/month |
 
 ---
 
-## Como Executar Localmente
+## Getting Started (Local Development)
 
-### Pré-requisitos
+### Prerequisites
 
 * Git
-* Docker e Docker Compose
-* Node.js v18 ou superior
+* Docker and Docker Compose
+* Node.js v18 or higher
 
-### Inicialização
+### Initialization
 
-1. Clone o repositório
-2. Crie o `.env` baseado no `.env.example`:
+1. Clone the repository
+2. Create the `.env` file based on `.env.example`:
 
 ```env
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/syngate"
+DATABASE_URL="postgresql://user:password@localhost:5432/syngate"
 REDIS_URL="redis://localhost:6379"
-JWT_SECRET="gere_uma_chave_secreta_forte"
+JWT_SECRET="generate_a_strong_secret_key"
 PORT=3333
 NODE_ENV=development
 
 ```
 
-3. Suba os serviços locais (PostgreSQL + Redis):
+3. Spin up the local services (PostgreSQL + Redis):
 
 ```bash
 npm run services:up
 
 ```
 
-4. Instale as dependências e aplique as migrations:
+4. Install dependencies and apply migrations:
 
 ```bash
 npm install
@@ -135,20 +122,20 @@ npx prisma migrate dev
 
 ```
 
-5. Inicie o servidor:
+5. Start the server:
 
 ```bash
 npm run dev
 
 ```
 
-O servidor estará disponível em `http://localhost:3333`.
+The server will be available at `http://localhost:3333`.
 
-A documentação interativa estará em `http://localhost:3333/docs`.
+The interactive documentation will be available at `http://localhost:3333/docs`.
 
 ---
 
-## 5. Populando o Banco (Seed)
+## 5. Database Seeding
 
 ```bash
 npx prisma db seed
@@ -157,194 +144,178 @@ npx prisma db seed
 
 ---
 
-## Variáveis de Ambiente
+## Environment Variables
 
-| Variável | Descrição | Obrigatória |
+| Variable | Description | Required |
 | --- | --- | --- |
-| `DATABASE_URL` | Connection string PostgreSQL | ✅ |
-| `REDIS_URL` | Connection string Redis | ✅ |
-| `JWT_SECRET` | Chave de assinatura JWT | ✅ (sem fallback — API não sobe sem ela) |
-| `PORT` | Porta do servidor | ✅ |
-| `NODE_ENV` | `development` ou `production` | ✅ |
-| `ALLOWED_ORIGINS` | Origens CORS permitidas (separadas por vírgula) | ❌ (default: `*`) |
+| `DATABASE_URL` | PostgreSQL connection string | ✅ |
+| `REDIS_URL` | Redis connection string | ✅ |
+| `JWT_SECRET` | JWT signature key | ✅ (no fallback — API will not start without it) |
+| `PORT` | Server port | ✅ |
+| `NODE_ENV` | `development` or `production` | ✅ |
+| `ALLOWED_ORIGINS` | Allowed CORS origins (comma-separated) | ❌ (default: `*`) |
 
 ---
 
-## Autenticação
+## Authentication
 
-### Usuários (Painel Web)
+### Users (Web Dashboard)
 
-Todas as rotas administrativas exigem `Authorization: Bearer <accessToken>`.
+All administrative routes require `Authorization: Bearer <accessToken>`.
 
-Papéis disponíveis: `ALUNO`, `PROFESSOR`, `FUNCIONARIO`, `COORDENADOR`, `GESTOR`, `VISITANTE`.
+Available roles: `ALUNO`, `PROFESSOR`, `FUNCIONARIO`, `COORDENADOR`, `GESTOR`, `VISITANTE`.
 
-Rotas restritas a `GESTOR` e `COORDENADOR`: criação/edição de usuários, dispositivos, salas e turnos.
+Routes restricted to `GESTOR` and `COORDENADOR`: creation/editing of users, devices, rooms, and shifts.
 
-### Dispositivos IoT (ESP32)
+### IoT Devices (ESP32)
 
-O endpoint `POST /api/v1/access` **não aceita JWT**. Autentica exclusivamente via:
+The `POST /api/v1/access` endpoint **does not accept JWT**. It authenticates exclusively via:
 
-```
+```text
 x-device-mac: AA:BB:CC:DD:EE:FF
-x-device-key: <chave raw gerada no provisionamento>
+x-device-key: <raw key generated during provisioning>
 
 ```
 
-A chave raw é exibida **uma única vez** no momento do provisionamento — deve ser gravada no firmware imediatamente.
+The raw key is displayed **only once** at the time of provisioning — it must be flashed into the firmware immediately.
 
 ---
 
 ## Endpoints
 
-### Sistema
+### System
 
-| Método | Endpoint | Descrição |
+| Method | Endpoint | Description |
 | --- | --- | --- |
-| `GET` | `/health` | Health check da API |
+| `GET` | `/health` | API health check |
 
-### Autenticação (`/api/v1/auth`)
+### Authentication (`/api/v1/auth`)
 
-| Método | Endpoint | Descrição |
+| Method | Endpoint | Description |
 | --- | --- | --- |
-| `POST` | `/cadastro` | Cadastro de usuário (e-mail requer verificação) |
-| `GET` | `/verificar-email` | Ativa a conta via token enviado por e-mail |
-| `POST` | `/login` | Login — retorna access token + refresh token |
-| `POST` | `/refresh` | Renova tokens (refresh token é rotacionado) |
-| `POST` | `/logout` | Invalida o access token via blacklist Redis |
+| `POST` | `/cadastro` | User registration (e-mail requires verification) |
+| `GET` | `/verificar-email` | Activates the account via e-mail token |
+| `POST` | `/login` | Login — returns access token + refresh token |
+| `POST` | `/refresh` | Renews tokens (refresh token is rotated) |
+| `POST` | `/logout` | Invalidates the access token via Redis blacklist |
 
-### Usuários (`/api/v1/users`)
+### Users (`/api/v1/users`)
 
-| Método | Endpoint | Descrição | Acesso |
+| Method | Endpoint | Description | Access |
 | --- | --- | --- | --- |
-| `GET` | `/me` | Perfil do usuário autenticado | Autenticado |
-| `GET` | `/` | Lista paginada de usuários | GESTOR / COORDENADOR |
-| `POST` | `/` | Cria usuário administrativamente | GESTOR / COORDENADOR |
-| `GET` | `/:id` | Busca usuário por ID | GESTOR / COORDENADOR |
-| `PUT` | `/:id` | Atualiza dados do usuário | GESTOR / COORDENADOR |
-| `DELETE` | `/:id` | Desativa usuário (soft delete) | GESTOR / COORDENADOR |
-| `PATCH` | `/:id/cartao` | Vincula / desvincula cartão RFID | GESTOR / COORDENADOR |
+| `GET` | `/me` | Authenticated user profile | Authenticated |
+| `GET` | `/` | Paginated user list | GESTOR / COORDENADOR |
+| `POST` | `/` | Creates user administratively | GESTOR / COORDENADOR |
+| `GET` | `/:id` | Fetches user by ID | GESTOR / COORDENADOR |
+| `PUT` | `/:id` | Updates user data | GESTOR / COORDENADOR |
+| `DELETE` | `/:id` | Deactivates user (soft delete) | GESTOR / COORDENADOR |
+| `PATCH` | `/:id/cartao` | Links / unlinks RFID card | GESTOR / COORDENADOR |
 
-### Salas (`/api/v1/rooms`)
+### Rooms (`/api/v1/rooms`)
 
-| Método | Endpoint | Descrição | Acesso |
+| Method | Endpoint | Description | Access |
 | --- | --- | --- | --- |
-| `GET` | `/` | Lista paginada de salas | Autenticado |
-| `POST` | `/` | Cria sala | GESTOR / COORDENADOR |
-| `GET` | `/:id` | Busca sala por ID | Autenticado |
-| `PUT` | `/:id` | Atualiza sala | GESTOR / COORDENADOR |
-| `DELETE` | `/:id` | Remove sala | GESTOR / COORDENADOR |
+| `GET` | `/` | Paginated room list | Authenticated |
+| `POST` | `/` | Creates room | GESTOR / COORDENADOR |
+| `GET` | `/:id` | Fetches room by ID | Authenticated |
+| `PUT` | `/:id` | Updates room | GESTOR / COORDENADOR |
+| `DELETE` | `/:id` | Removes room | GESTOR / COORDENADOR |
 
-### Turnos (`/api/v1/shifts`)
+### Shifts (`/api/v1/shifts`)
 
-| Método | Endpoint | Descrição | Acesso |
+| Method | Endpoint | Description | Access |
 | --- | --- | --- | --- |
-| `GET` | `/` | Lista paginada de turnos | Autenticado |
-| `POST` | `/` | Cria turno | GESTOR / COORDENADOR |
-| `GET` | `/:id` | Busca turno por ID | Autenticado |
-| `PUT` | `/:id` | Atualiza turno | GESTOR / COORDENADOR |
-| `DELETE` | `/:id` | Remove turno | GESTOR / COORDENADOR |
+| `GET` | `/` | Paginated shift list | Authenticated |
+| `POST` | `/` | Creates shift | GESTOR / COORDENADOR |
+| `GET` | `/:id` | Fetches shift by ID | Authenticated |
+| `PUT` | `/:id` | Updates shift | GESTOR / COORDENADOR |
+| `DELETE` | `/:id` | Removes shift | GESTOR / COORDENADOR |
 
-### Dispositivos IoT (`/api/v1/devices`)
+### IoT Devices (`/api/v1/devices`)
 
-| Método | Endpoint | Descrição | Acesso |
+| Method | Endpoint | Description | Access |
 | --- | --- | --- | --- |
-| `GET` | `/` | Lista paginada de dispositivos | GESTOR / COORDENADOR |
-| `POST` | `/` | Provisiona dispositivo e gera chave | GESTOR / COORDENADOR |
-| `GET` | `/:id` | Busca dispositivo por ID | GESTOR / COORDENADOR |
-| `PUT` | `/:id` | Atualiza dispositivo | GESTOR / COORDENADOR |
-| `DELETE` | `/:id` | Remove dispositivo | GESTOR / COORDENADOR |
+| `GET` | `/` | Paginated device list | GESTOR / COORDENADOR |
+| `POST` | `/` | Provisions device and generates key | GESTOR / COORDENADOR |
+| `GET` | `/:id` | Fetches device by ID | GESTOR / COORDENADOR |
+| `PUT` | `/:id` | Updates device | GESTOR / COORDENADOR |
+| `DELETE` | `/:id` | Removes device | GESTOR / COORDENADOR |
 
-### Validação de Acesso Físico (`/api/v1/access`)
+### Physical Access Validation (`/api/v1/access`)
 
-| Método | Endpoint | Descrição | Acesso |
+| Method | Endpoint | Description | Access |
 | --- | --- | --- | --- |
-| `POST` | `/` | Valida cartão RFID, registra log e emite evento Socket.IO | Dispositivo IoT |
+| `POST` | `/` | Validates RFID card, logs event, and emits Socket.IO event | IoT Device |
 
-### Relatórios (`/api/v1/reports`)
+### Reports (`/api/v1/reports`)
 
-| Método | Endpoint | Descrição | Acesso |
+| Method | Endpoint | Description | Access |
 | --- | --- | --- | --- |
-| `GET` | `/stats` | Estatísticas consolidadas do dashboard (Cache Redis 60s) | GESTOR / COORDENADOR |
-| `GET` | `/dashboard` | Agregação de acessos (cache Redis 5min) | GESTOR / COORDENADOR |
-| `GET` | `/export/csv` | Exporta histórico em CSV | GESTOR / COORDENADOR |
+| `GET` | `/stats` | Consolidated dashboard statistics (Redis Cache 60s) | GESTOR / COORDENADOR |
+| `GET` | `/dashboard` | Access aggregation (Redis Cache 5min) | GESTOR / COORDENADOR |
+| `GET` | `/export/csv` | Exports history as CSV | GESTOR / COORDENADOR |
 
 ---
 
-## Eventos Socket.IO
+## Socket.IO Events
 
-| Evento | Acionado por | Finalidade |
+| Event | Triggered by | Purpose |
 | --- | --- | --- |
-| `access:new` | `POST /api/v1/access` | Notifica em tempo real qualquer tentativa de acesso físico (concedido ou negado). O status de autorização é retornado dentro do payload do evento.
-
- |
+| `access:new` | `POST /api/v1/access` | Notifies in real-time any physical access attempt (granted or denied). The authorization status is returned within the event payload. |
 
 ---
 
-## Testes
+## Testing
 
 ```bash
-# Rodar todos os testes
+# Run all tests
 npm test
 
-# Modo watch
+# Watch mode
 npm run test:watch
 
 ```
 
-Cobertura atual: testes unitários (`shift-validator`) e testes de segurança (`auth`).
+Current coverage: unit tests (`shift-validator`) and security tests (`auth`).
 
 ---
 
-## Integração com Hardware (ESP32)
+## Hardware Integration (ESP32)
 
-O firmware da placa lê o UID do cartão RFID via sensor MFRC522, detecta presença via ultrassônico HC-SR04 e chama `POST /api/v1/access` com autenticação por headers de hardware.
+The board's firmware reads the RFID card UID via the MFRC522 sensor, detects presence via the HC-SR04 ultrasonic sensor, and calls `POST /api/v1/access` with hardware header authentication.
 
-O dispositivo deve ser provisionado via API antes de operar — o endpoint `POST /api/v1/devices` gera a `rawKey` que é gravada no firmware.
+The device must be provisioned via the API before operating — the `POST /api/v1/devices` endpoint generates the `rawKey` that is flashed into the firmware.
 
-> **Atenção:** o plano free do Render hiberna após 15 minutos de inatividade. A primeira requisição após hibernação pode levar até 30 segundos.
+> **Note:** Render's free tier hibernates after 15 minutes of inactivity. The first request after hibernation may take up to 30 seconds.
 
 ---
 
-## Guias de Contribuição e Qualidade (DX)
+## Contribution & Quality Guidelines (DX)
 
-### Padronização de Commits
+### Commit Standardization
 
-Este projeto utiliza **Husky** e **Commitlint** para garantir a rastreabilidade do histórico. Todos os commits devem seguir a especificação [Conventional Commits](https://www.conventionalcommits.org/):
+This project uses **Husky** and **Commitlint** to ensure history traceability. All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
-> `feat: adiciona rota de relatórios`
-> `fix: corrige validação de turno noturno`
+> `feat: adds report route`
+> `fix: fixes night shift validation`
 
-### Auditoria Dinâmica (AI Agents)
+### Dynamic Auditing (AI Agents)
 
-Para garantir a saúde da arquitetura, o projeto conta com prompts especializados para ferramentas de Inteligência Artificial localizados em `.agents/skills/`. Durante o desenvolvimento, utilize comandos de barra (ex: `/architecture-audit`, `/security-audit`, `/database-architect-audit`) na sua IDE para rodar verificações de integridade.
+To ensure architecture health, the project features specialized prompts for local Artificial Intelligence tools located in `.agents/skills/`. During development, use slash commands (e.g., `/architecture-audit`, `/security-audit`, `/database-architect-audit`) in your IDE to run integrity checks.
 
-| Agent Skill | Objetivo Principal |
+| Agent Skill | Main Goal |
 | --- | --- |
-| **API Architect Audit** | Valida design de endpoints REST, OpenAPI/Swagger e padronização de status HTTP.
+| **API Architect Audit** | Validates REST endpoint design, OpenAPI/Swagger, and HTTP status standardization. |
+| **Architecture Audit** | Ensures strict separation of concerns (SOLID and Clean Architecture) between Controllers and Services. |
+| **Database Architect Audit** | Analyzes the Prisma schema looking for normalization gaps, missing indexes, and N+1 queries. |
+| **Observability Lead Audit** | Checks structured logs, unhandled error catching, and possible sensitive data exposure. |
+| **Performance Audit** | Focused on high concurrency, identifies asynchronous bottlenecks and memory leaks. |
+| **Security Audit** | Deep vulnerability scan (XSS, IDOR, Secrets) based on the exact versions in `package.json` and lockfile. |
+| **Testing Lead Audit** | Evaluates true coverage, test fragility, and the testing pyramid balance. |
 
- |
-| **Architecture Audit** | Garante a separação estrita de responsabilidades (SOLID e Clean Architecture) entre Controllers e Services.
+### Support Tools
 
- |
-| **Database Architect Audit** | Analisa o schema do Prisma procurando por gaps de normalização, índices ausentes e N+1 queries.
-
- |
-| **Observability Lead Audit** | Checa logs estruturados, tratamento de erros não capturados e possível exposição de dados sensíveis.
-
- |
-| **Performance Audit** | Focado em alta concorrência, identifica gargalos assíncronos e vazamentos de memória.
-
- |
-| **Security Audit** | Varredura profunda de vulnerabilidades (XSS, IDOR, Segredos) baseada nas versões exatas do `package.json` e lockfile.
-
- |
-| **Testing Lead Audit** | Avalia a cobertura real, fragilidade dos testes e o balanceamento da pirâmide de testes.
-
- |
-
-### Ferramentas de Suporte
-
-Caso seja necessário redefinir emergencialmente as senhas do ambiente local, execute o utilitário de break-glass presente no repositório:
+In case it is necessary to perform an emergency reset of local environment passwords, run the break-glass utility included in the repository:
 
 ```bash
 npx tsx reset-senha.ts
@@ -353,6 +324,6 @@ npx tsx reset-senha.ts
 
 ---
 
-## Licença
+## License
 
-Este projeto está sob a Licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
