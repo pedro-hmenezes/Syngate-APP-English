@@ -4,10 +4,10 @@
 
 ## Repository & Live Links
 
-* **Back-End Repository:** [Syngate-BackEnd](https://github.com/Molimpion/Syngate-BackEnd)
-* **Front-End Repository:** [syngate-frontend](https://github.com/Molimpion/syngate-frontend)
-* **IoT Repository:** [Syngate-IOT](https://github.com/Molimpion/Syngate-IOT)
-* **Presentation (Slides):** [Access Presentation](https://github.com/Molimpion/Syngate-IOT/blob/main/docs/presentation/slide.pdf)
+* **Back-End Repository:** [Syngate-BackEnd](https://github.com/pedro-hmenezes/Syngate-APP-English/tree/main/Syngate-BackEnd)
+* **Front-End Repository:** [syngate-frontend](https://github.com/pedro-hmenezes/Syngate-APP-English/tree/main/syngate-frontend)
+* **IoT Repository:** [Syngate-IOT](https://github.com/pedro-hmenezes/Syngate-APP-English/tree/main/Syngate-IOT)
+* **Presentation (Slides):** [Access Presentation](https://github.com/pedro-hmenezes/Syngate-APP-English/blob/main/Documents/Presentation/Apresenta%C3%A7%C3%A3o%20Syngate%20-%20MVP%20Final.pdf)
 * **Live Solution:** [Access Web Platform](https://syngate-frontend.vercel.app/login)
 * **Documentation & Management:** [Kanban Board (GitHub Projects)](https://github.com/users/Molimpion/projects/1)
 
